@@ -1,6 +1,5 @@
 #gui for chess board
 import pygame
-import sys
 
 #global variables
 pygame.init()
@@ -134,6 +133,8 @@ while RUNNING:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             RUNNING = False
+        elif event.type == pygame.MOUSEBUTTONDOWN and RUNNING == True:
+            x, y = pygame.mouse.get_pos()
     WINDOW.fill("black")
     
     #place game here. need to draw a board, fill it in, and place pieces.
