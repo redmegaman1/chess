@@ -32,6 +32,7 @@ def isOdd(int):
     else:
         return True
     
+#loads up 2d array for drawing and initializing boardLogic later on
 def initializeBoard():
     global Z, ROWS, COLS
 
@@ -60,6 +61,8 @@ def drawBoard(boardDraw):
     pygame.display.flip()
     return boardDraw 
 
+#called anytime a move is made. this updates the positions as well as creates the board at the beginning.
+#ngl this function is so ugly. there is definitly a better way to do this
 def loadImg(boardDraw, boardLogic):
     global BROOK, BBISHOP, BKNIGHT, BQUEEN, BKING, BPAWN, WROOK, WBISHOP, WKNIGHT, WQUEEN, WKING, WPAWN
 
@@ -113,10 +116,8 @@ def loadImg(boardDraw, boardLogic):
     
     pygame.display.update()
 
-def lOrD(x, y):
-    color = pygame.Surface.get_at(x*77, y*77)
-    print(color)
-
+#initialies are logical representation of the chess board. used to update the location of pieces.
+#i am hoping that this will be primarily used for the machine learning or computer bot that i will implement later on
 def logicalBoard():
     global ROWS, COLS
     boardLogic = [[0 for i in range(COLS)] for j in range(ROWS)]
@@ -150,6 +151,7 @@ def logicalBoard():
         boardLogic[6][rows] = 1
     return boardLogic
 
+#used for returning the selected square of the user which is then called to find the piece inside of the square
 def selectSquare(x, y):
     global ROWS, COLS
     for col in range(COLS):
@@ -159,6 +161,7 @@ def selectSquare(x, y):
             else:
                 continue
 
+#updates the logical location of the piece and calls necessary functions to update the visual location of pieces
 def movePiece(square, boardLogic, place, boardDraw):
     global COLS, ROWS
 
