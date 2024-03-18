@@ -4,6 +4,7 @@ import gameLogic
 
 def main():
     selectFlag = False
+    white2Move = False
 
     while gui.RUNNING:
         for event in pygame.event.get():
@@ -12,14 +13,20 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN and gui.RUNNING == True and selectFlag == False:
                 x, y = pygame.mouse.get_pos()
                 square = gameLogic.selectSquare(x, y)
-                selectFlag = True
+                if gameLogic.turnSequence(boardLogic, square) == white2Move:
+                    selectFlag = True
+                    if white2Move == False:
+                        white2Move = True
+                    else:
+                        white2Move = False
+                else:
+                    print("select the other color...")
             elif event.type == pygame.MOUSEBUTTONDOWN and gui.RUNNING == True and selectFlag == True:
                 x, y = pygame.mouse.get_pos()
                 place = gameLogic.selectSquare(x, y)
                 gameLogic.movePiece(square, boardLogic, place, boardDraw)
                 pygame.display.flip()
                 selectFlag = False
-                
 
         gui.WINDOW.fill("black")
         

@@ -1,5 +1,6 @@
 import gui
 
+MOVECOUNTER = 1
 #initialize the logical representation of the chess board. used to update the location of pieces.
 #i am hoping that this will be primarily used for the machine learning or computer bot that i will implement later on
 def logicalBoard():
@@ -45,7 +46,7 @@ def selectSquare(x, y):
 
 #updates the logical location of the piece and calls necessary functions to update the visual location of pieces
 def movePiece(square, boardLogic, place, boardDraw):
-    
+
     piece = boardLogic[square[1]][square[0]]
     if piece != 0:
         #TODO: add a check valid move function
@@ -56,3 +57,17 @@ def movePiece(square, boardLogic, place, boardDraw):
         gui.loadImg(boardDraw, boardLogic)
     else:
         print("Invalid square!")
+
+def turnSequence(boardLogic, square):
+    global MOVECOUNTER
+
+    if gui.isOdd(MOVECOUNTER) == False and boardLogic[square[1]][square[0]] < 0:
+        MOVECOUNTER += 1
+        return True
+    elif gui.isOdd(MOVECOUNTER) == True and boardLogic[square[1]][square[0]] > 0:
+        MOVECOUNTER += 1
+        return False
+    else:
+        print("selected a blank square")
+
+    return -1

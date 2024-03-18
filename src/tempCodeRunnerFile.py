@@ -1,2 +1,0 @@
-boardDraw = initializeBoard()
-            boardLogic = logicalBoard()
