@@ -1,12 +1,9 @@
 import gui
 
-ROWS, COLS = (8, 8)
-
 #initialize the logical representation of the chess board. used to update the location of pieces.
 #i am hoping that this will be primarily used for the machine learning or computer bot that i will implement later on
 def logicalBoard():
-    global ROWS, COLS
-    boardLogic = [[0 for i in range(COLS)] for j in range(ROWS)]
+    boardLogic = [[0 for i in range(gui.COLS)] for j in range(gui.ROWS)]
 
     boardLogic[0][0] = -5
     boardLogic[0][1] = -3
@@ -16,7 +13,7 @@ def logicalBoard():
     boardLogic[0][5] = -3.1
     boardLogic[0][6] = -3
     boardLogic[0][7] = -5
-    for rows in range(ROWS):
+    for rows in range(gui.ROWS):
         boardLogic[1][rows] = -1
 
     i = (0,1,2,3)
@@ -33,15 +30,14 @@ def logicalBoard():
     boardLogic[7][5] = 3.1
     boardLogic[7][6] = 3
     boardLogic[7][7] = 5
-    for rows in range(ROWS):
+    for rows in range(gui.ROWS):
         boardLogic[6][rows] = 1
     return boardLogic
 
 #used for returning the selected square of the user which is then called to find the piece inside of the square
 def selectSquare(x, y):
-    global ROWS, COLS
-    for col in range(COLS):
-        for row in range(ROWS):
+    for col in range(gui.COLS):
+        for row in range(gui.ROWS):
             if x > row*77 and x < (row+1)*77 and y > col *77 and y < (col+1)*77:
                 return (row, col)
             else:
@@ -49,8 +45,7 @@ def selectSquare(x, y):
 
 #updates the logical location of the piece and calls necessary functions to update the visual location of pieces
 def movePiece(square, boardLogic, place, boardDraw):
-    global COLS, ROWS
-
+    
     piece = boardLogic[square[1]][square[0]]
     if piece != 0:
         #TODO: add a check valid move function
