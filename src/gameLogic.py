@@ -1,6 +1,7 @@
 import gui
 
 MOVECOUNTER = 1
+FIRSTPAWNMOVE = [0 * 16]
 #initialize the logical representation of the chess board. used to update the location of pieces.
 #i am hoping that this will be primarily used for the machine learning or computer bot that i will implement later on
 def logicalBoard():
@@ -69,5 +70,19 @@ def turnSequence(boardLogic, square):
         return False
     else:
         print("selected a blank square")
-
     return -1
+
+def isValidMove(boardLogic, place, square):
+
+    piece = boardLogic[square[1]][square[0]]
+
+    #TODO only let pawns push two squares on first move using the global array declared in this file
+    if piece == 1:
+        if (place[1] == square[1]-2 and place[0] == square[0]) or (place[1] == square[1]-1 and place[0] == square[0]):
+            return True
+    elif piece == -1:
+        if (place[1] == square[1]+2) or place[1] == square[1]+1:
+            return True
+        else: 
+            print("pawn can only move 1 or two squares...")
+            return False

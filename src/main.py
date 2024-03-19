@@ -24,8 +24,16 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN and gui.RUNNING == True and selectFlag == True:
                 x, y = pygame.mouse.get_pos()
                 place = gameLogic.selectSquare(x, y)
-                gameLogic.movePiece(square, boardLogic, place, boardDraw)
-                pygame.display.flip()
+                if gameLogic.isValidMove(boardLogic, place, square) == True:
+                    gameLogic.movePiece(square, boardLogic, place, boardDraw)
+                    pygame.display.flip()
+                else:
+                    print("it no worky like that")
+                    if white2Move == False:
+                        white2Move = True
+                    else:
+                        white2Move = False
+                
                 selectFlag = False
 
         gui.WINDOW.fill("black")
