@@ -13,7 +13,7 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN and gui.RUNNING == True and selectFlag == False:
                 x, y = pygame.mouse.get_pos()
                 square = gameLogic.selectSquare(x, y)
-                if gameLogic.turnSequence(boardLogic, square) == white2Move:
+                if gameLogic.turnSequence(boardLogic, square) == white2Move: #error message needs to print out if -1 is returned
                     selectFlag = True
                     if white2Move == False:
                         white2Move = True
@@ -28,7 +28,7 @@ def main():
                     gameLogic.movePiece(square, boardLogic, place, boardDraw)
                     pygame.display.flip()
                 else:
-                    print("it no worky like that")
+                    #print("it no worky like that")
                     if white2Move == False:
                         white2Move = True
                     else:

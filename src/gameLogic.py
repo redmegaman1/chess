@@ -63,25 +63,30 @@ def turnSequence(boardLogic, square):
     global MOVECOUNTER
 
     if gui.isOdd(MOVECOUNTER) == False and boardLogic[square[1]][square[0]] < 0:
-        MOVECOUNTER += 1
+        
         return True
     elif gui.isOdd(MOVECOUNTER) == True and boardLogic[square[1]][square[0]] > 0:
-        MOVECOUNTER += 1
         return False
     else:
-        print("selected a blank square")
+        print("selected a blank square or incorrect piece")
     return -1
 
-def isValidMove(boardLogic, place, square):
+def isValidMove(boardLogic, place, square): #increase movecounter here
+    global MOVECOUNTER
 
     piece = boardLogic[square[1]][square[0]]
 
     #TODO only let pawns push two squares on first move using the global array declared in this file
     if piece == 1:
         if (place[1] == square[1]-2 and place[0] == square[0]) or (place[1] == square[1]-1 and place[0] == square[0]):
+            MOVECOUNTER += 1
             return True
+        else: 
+            print("pawn can only move 1 or two squares...")
+            return False
     elif piece == -1:
-        if (place[1] == square[1]+2) or place[1] == square[1]+1:
+        if (place[1] == square[1]+2 and place[0] == square[0]) or (place[1] == square[1]+1 and place[0] == square[0]):
+            MOVECOUNTER += 1
             return True
         else: 
             print("pawn can only move 1 or two squares...")
