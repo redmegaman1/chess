@@ -23,7 +23,7 @@ def logicalBoard():
     for x in i:
         for y in j:
             boardLogic[x+2][y] = 0
-#test
+#test 2
     boardLogic[7][0] = 5
     boardLogic[7][1] = 3
     boardLogic[7][2] = 3.1
