@@ -78,16 +78,48 @@ def isValidMove(boardLogic, place, square): #increase movecounter here
 
     #TODO only let pawns push two squares on first move using the global array declared in this file
     if piece == 1:
-        if (place[1] == square[1]-2 and place[0] == square[0]) or (place[1] == square[1]-1 and place[0] == square[0]):
-            MOVECOUNTER += 1
+        if (movement(piece, place,square, boardLogic) == True or capture(piece, place, square, boardLogic) == True):
             return True
         else: 
-            print("pawn can only move 1 or two squares...")
             return False
     elif piece == -1:
-        if (place[1] == square[1]+2 and place[0] == square[0]) or (place[1] == square[1]+1 and place[0] == square[0]):
-            MOVECOUNTER += 1
+        if (movement(piece, place,square, boardLogic) == True or capture(piece, place, square, boardLogic) == True):
             return True
         else: 
-            print("pawn can only move 1 or two squares...")
+            return False
+
+# check to see if a movement is attempted
+def movement(piece, place, square, boardLogic):
+    global MOVECOUNTER
+    if (((place[1] == square[1]+2 and place[0] == square[0]) or (place[1] == square[1]+1 and place[0] == square[0])) or ((place[1] == square[1]-2 and place[0] == square[0]) or (place[1] == square[1]-1 and place[0] == square[0])) and piecePresent(piece, place, boardLogic) == False):
+        MOVECOUNTER = MOVECOUNTER + 1
+        return True
+    else:
+        return False
+
+# check to see if a capture is intended
+def capture(piece, place, square, boardLogic):
+    global MOVECOUNTER
+    if (piece == 1 or piece == -1):
+        if ((place[1] == square[1]+1 and place[0] == square[0]+1) or (place[1] == square[1]+1 and place[0] == square[0]-1)) or ((place[1] == square[1]-1 and place[0] == square[0]-1) or (place[1] == square[1]-1 and place[0] == square[0]+1)) and piecePresent(piece, place, boardLogic) == True:
+            MOVECOUNTER = MOVECOUNTER + 1
+            return True
+        else:
+            #print(f"place 0 = {place[0]} place 1 = {place[1]} square 0 = {square[0]} square 1 = {square[1]}")
+            return False
+
+# check to see if a piece is occupying the square wanting to be moved to
+def piecePresent(piece, place, boardLogic):
+
+# if piece is white, return true if intended square contains a black piece
+    if (piece > 0):
+        if (boardLogic[place[1]][place[0]] < 0):
+            return True
+        else:
+            return False
+# if piece is black, return true if intended square contains a white piece
+    if (piece < 0):
+        if (boardLogic[place[1]][place[0]] > 0):
+            return True
+        else:
             return False
