@@ -23,8 +23,8 @@ def logicalBoard():
 
     i = (0,1,2,3)
     j = (0,1,2,3,4,5,6,7)
-    for x in i:
-        for y in j:
+    for x in range(3):
+        for y in range(7):
             boardLogic[x+2][y] = 0
 #test 2
     boardLogic[7][0] = 5
@@ -125,6 +125,17 @@ def isValidMove(boardLogic, place, square): #increase movecounter here
             return True
         else: 
             return False
+    elif piece == -99:
+        if ((pieceInWay(piece,place,square,boardLogic) == False and (movement(piece, place,square, boardLogic) == True)) or ((pieceInWay(piece,place,square,boardLogic) == True and capture(piece, place, square, boardLogic) == True))):
+            return True
+        else: 
+            return False
+    elif piece == -99:
+        if ((pieceInWay(piece,place,square,boardLogic) == False and (movement(piece, place,square, boardLogic) == True)) or ((pieceInWay(piece,place,square,boardLogic) == True and capture(piece, place, square, boardLogic) == True))):
+            return True
+        else: 
+            return False
+
     
 
 # check to see if a movement is attempted and if so, it is an allowed move for the specific piece
@@ -158,6 +169,17 @@ def movement(piece, place, square, boardLogic):
                     or (place[1] == square[1] and square[0] == square[0]+x)) and piecePresent(piece, place, boardLogic,square) == False:
                 MOVECOUNTER = MOVECOUNTER + 1
                 return True
+    if (piece == 99 or piece == -99):
+        if ((place[1] == square[1]+1 and place[0] == square[0])
+            or (place[1] == square[1] and place[0] == square[0]+1)
+              or (place[1] == square[1]-1 and place[0] == square[0])
+                or (place[1] == square[1] and place[0] == square[0]-1)
+                  or (place[1] == square[1]+1 and place[0] == square[0]+1)
+                    or (place[1] == square[1]+1 and place[0] == square[0-1])
+                      or (place[1] == square[1]-1 and place[0] == square[0]+1)
+                        or (place[1] == square[1]-1 and place[0] == square[0]-1)) and piecePresent(piece, place, boardLogic, square) == False:
+            MOVECOUNTER = MOVECOUNTER + 1
+            return True
 
         return False
 
@@ -182,7 +204,7 @@ def capture(piece, place, square, boardLogic):
         else:
             return False
     if(piece == 3.1 or piece == -3.1):
-        for x in range(8): # check if path to destination x, y is empty and piece lies at the end of it. If so, return True. 
+        for x in range(1,8): # check if path to destination x, y is empty and piece lies at the end of it. If so, return True. 
             if ((boardLogic[square[1]+x][square[0]+x] != 0)
                  or (boardLogic[square[1]+x][square[0]-x] != 0)
                    or (boardLogic[square[1]-x][square[0]+x] != 0)
@@ -191,17 +213,42 @@ def capture(piece, place, square, boardLogic):
                 updateScore(piece, place, boardLogic) 
                 boardLogic[place[1]][place[0]] = 0
                 return True
+            elif ((boardLogic[square[1]+x][square[0]+x] != 0)
+                 or (boardLogic[square[1]+x][square[0]-x] != 0)
+                   or (boardLogic[square[1]-x][square[0]+x] != 0)
+                     or (boardLogic[square[1]-x][square[0-x]] != 0)):
+                return False 
     if (piece == 5 or piece == -5):
-        for x in range(8): # check if path to destination x, y is empty and piece lies at the end of it. If so, return True. 
-            if ((boardLogic[square[1]+x][square[0]] != 0)
-                 or (boardLogic[square[1]-x][square[0]] != 0)
-                   or (boardLogic[square[1]][square[0]+x] != 0)
-                     or (boardLogic[square[1]][square[0-x]] != 0)) and piecePresent(piece, place, boardLogic, square) == True:
-                MOVECOUNTER = MOVECOUNTER + 1
-                updateScore(piece, place, boardLogic) 
-                boardLogic[place[1]][place[0]] = 0
-                return True
+        if (pieceInWay(piece, place,square,boardLogic) == True and piecePresent(piece, place,boardLogic,square) == True):
+            return True
+        else:
+            return False
+        # for x in range(1,8): # check if path to destination x, y is empty and piece lies at the end of it. If so, return True. 
+        #     if ((boardLogic[square[1]+x][square[0]] != 0)
+        #          or (boardLogic[square[1]-x][square[0]] != 0)
+        #            or (boardLogic[square[1]][square[0]+x] != 0)
+        #              or (boardLogic[square[1]][square[0-x]] != 0)) and piecePresent(piece, place, boardLogic, square) == True:
+        #         MOVECOUNTER = MOVECOUNTER + 1
+        #         updateScore(piece, place, boardLogic) 
+        #         boardLogic[place[1]][place[0]] = 0
+        #         return True
+        #     elif ((boardLogic[square[1]+x][square[0]] != 0)
+        #          or (boardLogic[square[1]-x][square[0]] != 0)
+        #            or (boardLogic[square[1]][square[0]+x] != 0)
+        #              or (boardLogic[square[1]][square[0-x]] != 0)):
+        #         return False 
         return False
+    if (piece == 99 or piece == -99):
+        if ((place[1] == square[1]+1 and place[0] == square[0])
+            or (place[1] == square[1] and place[0] == square[0]+1)
+              or (place[1] == square[1]-1 and place[0] == square[0])
+                or (place[1] == square[1] and place[0] == square[0]-1)
+                  or (place[1] == square[1]+1 and place[0] == square[0]+1)
+                    or (place[1] == square[1]+1 and place[0] == square[0-1])
+                      or (place[1] == square[1]-1 and place[0] == square[0]+1)
+                        or (place[1] == square[1]-1 and place[0] == square[0]-1)) and piecePresent(piece, place, boardLogic, square) == True:
+            MOVECOUNTER = MOVECOUNTER + 1
+            return True
 
 # check to see if a piece is occupying the square wanting to be moved to
 def piecePresent(piece, place, boardLogic, square):
