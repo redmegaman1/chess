@@ -19,8 +19,7 @@ def main():
                         white2Move = True
                     else:
                         white2Move = False
-                else:
-                    print("select the other color...")
+
             elif event.type == pygame.MOUSEBUTTONDOWN and gui.RUNNING == True and selectFlag == True:
                 x, y = pygame.mouse.get_pos()
                 place = gameLogic.selectSquare(x, y)
@@ -28,7 +27,6 @@ def main():
                     gameLogic.movePiece(square, boardLogic, place, boardDraw)
                     pygame.display.flip()
                 else:
-                    #print("it no worky like that")
                     if white2Move == False:
                         white2Move = True
                     else:
@@ -38,8 +36,7 @@ def main():
 
         gui.WINDOW.fill("black")
         
-        #place game here. need to draw a  boardDraw, fill it in, and place pieces.
-        #functionalitY of game should be able to be contained in functions contained elsewhere.
+
         if gui.BOARDEXISTS == True:
             continue
         else:
