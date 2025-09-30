@@ -1,5 +1,5 @@
 import gui
-import math
+import gameRules
 
 MOVECOUNTER = 1
 FIRSTPAWNMOVE = [0 * 16]
@@ -86,7 +86,7 @@ def isValidMove(boardLogic, place, square): #increase movecounter here
 
     #TODO only let pawns push two squares on first move using the global array declared in this file
     if piece == 1:
-        if (movement(piece, place,square, boardLogic) == True or capture(piece, place, square, boardLogic) == True):
+        if ((movement(piece, place,square, boardLogic) == True or capture(piece, place, square, boardLogic) == True) and gameRules.inCheck(piece,place,square,boardLogic) == False):
             return True
         else: 
             return False
@@ -125,7 +125,7 @@ def isValidMove(boardLogic, place, square): #increase movecounter here
             return True
         else: 
             return False
-    elif piece == -99:
+    elif piece == 99:
         if ((pieceInWay(piece,place,square,boardLogic) == False and (movement(piece, place,square, boardLogic) == True)) or ((pieceInWay(piece,place,square,boardLogic) == False and capture(piece, place, square, boardLogic) == True))):
             return True
         else: 
@@ -135,6 +135,12 @@ def isValidMove(boardLogic, place, square): #increase movecounter here
             return True
         else: 
             return False
+    elif (piece == -9 or piece == 9):
+        if ((pieceInWay(piece,place,square,boardLogic) == False and (movement(piece, place,square, boardLogic) == True)) or ((pieceInWay(piece,place,square,boardLogic) == False and capture(piece, place, square, boardLogic) == True))):
+            return True
+        else: 
+            return False
+
 
     
 
@@ -166,18 +172,17 @@ def movement(piece, place, square, boardLogic):
         else:
             return False
     if (piece == 99 or piece == -99):
-        if ((place[1] == square[1]+1 and place[0] == square[0])
-            or (place[1] == square[1] and place[0] == square[0]+1)
-              or (place[1] == square[1]-1 and place[0] == square[0])
-                or (place[1] == square[1] and place[0] == square[0]-1)
-                  or (place[1] == square[1]+1 and place[0] == square[0]+1)
-                    or (place[1] == square[1]+1 and place[0] == square[0-1])
-                      or (place[1] == square[1]-1 and place[0] == square[0]+1)
-                        or (place[1] == square[1]-1 and place[0] == square[0]-1)) and piecePresent(piece, place, boardLogic, square) == False:
+        if (pieceInWay(piece, place,square,boardLogic) == False) and (piecePresent(piece, place,boardLogic,square) == False):
             MOVECOUNTER = MOVECOUNTER + 1
             return True
+    if (piece == 9 or piece == -9):
+        if (pieceInWay(piece, place,square,boardLogic) == False) and (piecePresent(piece, place,boardLogic,square) == False):
+            MOVECOUNTER = MOVECOUNTER + 1
+            return True
+        else:
+            return False
 
-        return False
+    return False
 
 
 # check to see if a capture is intended
@@ -217,16 +222,19 @@ def capture(piece, place, square, boardLogic):
             return False
         
     if (piece == 99 or piece == -99):
-        if ((place[1] == square[1]+1 and place[0] == square[0])
-            or (place[1] == square[1] and place[0] == square[0]+1)
-              or (place[1] == square[1]-1 and place[0] == square[0])
-                or (place[1] == square[1] and place[0] == square[0]-1)
-                  or (place[1] == square[1]+1 and place[0] == square[0]+1)
-                    or (place[1] == square[1]+1 and place[0] == square[0-1])
-                      or (place[1] == square[1]-1 and place[0] == square[0]+1)
-                        or (place[1] == square[1]-1 and place[0] == square[0]-1)) and piecePresent(piece, place, boardLogic, square) == True:
+        if ((pieceInWay(piece,place,square,boardLogic) == False) and piecePresent(piece, place, boardLogic, square) == True):
             MOVECOUNTER = MOVECOUNTER + 1
+            updateScore(piece, place, boardLogic) 
+            boardLogic[place[1]][place[0]] = 0
             return True
+    
+    if (piece == 9 or piece == -9):
+        if ((pieceInWay(piece,place,square,boardLogic) == False) and piecePresent(piece, place, boardLogic, square) == True):
+            MOVECOUNTER = MOVECOUNTER + 1
+            updateScore(piece, place, boardLogic) 
+            boardLogic[place[1]][place[0]] = 0
+            return True
+        
     return False
 
 # check to see if a piece is occupying the square wanting to be moved to
@@ -263,63 +271,7 @@ def pieceInWay(piece, place, square, boardLogic):
     flag = True
     x = [0,0]
     numOfPieces = 0
-    
-    # if(piece == 3.1):
-    #     bDistance = abs(place[1] -square[1])
-    #     if ((direction[0] > 0 and direction[1] > 0) and (abs(direction[1]) == abs(direction[0]))): # +, +
-    #         while bDistance != 0:
-    #             x[1] = square[1]+bDistance
-    #             x[0] = square[0]+bDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             bDistance = bDistance - 1
-    #         return flag
-    #     elif ((direction[1] > 0 and direction[0] < 0) and (abs(direction[1]) == abs(direction[0]))): # +, -
-    #         while bDistance != 0:
-    #             x[1] = square[1]+bDistance
-    #             x[0] = square[0]-bDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             bDistance = bDistance - 1
-    #         return flag
-    #     elif ((direction[1] < 0 and direction[0] > 0) and (abs(direction[1]) == abs(direction[0]))):# -, +
-    #         while bDistance != 0:
-    #             x[1] = square[1]-bDistance
-    #             x[0] = square[0]+bDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             bDistance = bDistance - 1
-    #         return flag
-    #     elif ((direction[0] < 0 and direction[1] < 0) and (abs(direction[1]) == abs(direction[0]))):# -, -
-    #         while bDistance != 0:
-    #             x[1] = square[1]-bDistance
-    #             x[0] = square[0]-bDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             bDistance = bDistance - 1
-    #         return flag
-    #     return flag
-        
+
     if(piece == -3.1 or piece == 3.1):
         bDistance = abs(place[1] -square[1])
         if ((direction[0] > 0 and direction[1] > 0) and (abs(direction[1]) == abs(direction[0]))): # +, +
@@ -458,64 +410,154 @@ def pieceInWay(piece, place, square, boardLogic):
                 flag = True
             return flag
         return flag
-
     
-    # if(piece == 5):
-    #     if ((direction[1] > 0 and direction[0] == 0)): # n/a, +
-    #         rDistance = abs(place[1] - square[1])
-    #         while rDistance != 0:
-    #             x[0] = square[0]
-    #             x[1] = square[1]+rDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             rDistance = rDistance - 1
-    #         return flag
-    #     elif ((direction[1] == 0 and direction[0] > 0)): # +, n/a
-    #         rDistance = abs(place[0] - square[0])
-    #         while rDistance != 0:
-    #             x[0] = square[0]+rDistance
-    #             x[1] = square[1]
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             rDistance = rDistance - 1
-    #         return flag
-    #     elif ((direction[1] < 0 and direction[0] == 0)):# -, n/a
-    #         rDistance = abs(place[1] - square[1])
-    #         while rDistance != 0:
-    #             x[0] = square[0]
-    #             x[1] = square[1]-rDistance
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             rDistance = rDistance - 1
-    #         return flag
-    #     elif ((direction[1] == 0 and direction[0] < 0)):# n/a, -
-    #         rDistance = abs(place[0] - square[0])
-    #         while rDistance != 0:
-    #             x[0] = square[0]-rDistance
-    #             x[1] = square[1]
-    #             if ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == True):
-    #                 flag = False
-    #             elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
-    #                 flag = True
-    #                 break
-    #             elif (boardLogic[x[1]][x[0]] == 0):
-    #                 flag = False
-    #             rDistance = rDistance - 1
-    #         return flag
-    #     return flag
-        
+    if (piece == 99 or piece == -99):
+        kxDistance = abs(place[0] - square[0])
+        kyDistance = abs(place[1] - square[1])
+
+        if (kxDistance <= 1 and kyDistance <= 1):
+            if (boardLogic[place[1]][place[0]] != 0 and piecePresent(piece,place,boardLogic,square) == True):
+                flag = False
+                return flag
+            elif (boardLogic[place[1]][place[0]] == 0 and piecePresent(piece,place,boardLogic,square) == False):
+                flag = False
+                return flag
+        return flag
+    
+    # queen movement
+    if(piece == -9 or piece == 9):
+        bDistance = abs(place[1] -square[1])
+        if ((direction[0] > 0 and direction[1] > 0) and (abs(direction[1]) == abs(direction[0]))): # +, +
+            while bDistance != 0:
+                x[1] = square[1]+bDistance
+                x[0] = square[0]+bDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                bDistance = bDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[1] > 0 and direction[0] < 0) and (abs(direction[1]) == abs(direction[0]))): # +, -
+            while bDistance != 0:
+                x[1] = square[1]+bDistance
+                x[0] = square[0]-bDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                bDistance = bDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[1] < 0 and direction[0] > 0) and (abs(direction[1]) == abs(direction[0]))):# -, +
+            while bDistance != 0:
+                x[1] = square[1]-bDistance
+                x[0] = square[0]+bDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                bDistance = bDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[0] < 0 and direction[1] < 0) and (abs(direction[1]) == abs(direction[0]))):# -, -
+            while bDistance != 0:
+                x[1] = square[1]-bDistance
+                x[0] = square[0]-bDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                bDistance = bDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+
+        if ((direction[1] > 0 and direction[0] == 0)): # n/a, +
+            rDistance = abs(place[1] - square[1])
+            while rDistance != 0:
+                x[0] = square[0]
+                x[1] = square[1]+rDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                rDistance = rDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[1] == 0 and direction[0] > 0)): # +, n/a
+            rDistance = abs(place[0] - square[0])
+            while rDistance != 0:
+                x[0] = square[0]+rDistance
+                x[1] = square[1]
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                rDistance = rDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[1] < 0 and direction[0] == 0)):# -, n/a
+            rDistance = abs(place[1] - square[1])
+            while rDistance != 0:
+                x[0] = square[0]
+                x[1] = square[1]-rDistance
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                rDistance = rDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        elif ((direction[1] == 0 and direction[0] < 0)):# n/a, -
+            rDistance = abs(place[0] - square[0])
+            while rDistance != 0:
+                x[0] = square[0]-rDistance
+                x[1] = square[1]
+                if ((boardLogic[x[1]][x[0]] != 0) and (piecePresent(piece,x,boardLogic,square) == True) and numOfPieces <= 1):
+                    flag = False
+                    numOfPieces = numOfPieces + 1
+                elif ((boardLogic[x[1]][x[0]] != 0) and piecePresent(piece,x,boardLogic,square) == False):
+                    flag = True
+                    break
+                elif (boardLogic[x[1]][x[0]] == 0):
+                    flag = False
+                rDistance = rDistance - 1
+            if numOfPieces >= 2:
+                flag = True
+            return flag
+        return flag
